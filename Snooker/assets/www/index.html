@@ -1,0 +1,1101 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Snooker Scoreboard</title>
+
+<script src="js/jquery-1.9.1.min.js"></script>
+
+<script type="text/javascript">
+
+	var debug = false;
+
+	if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/)) {
+	  //document.addEventListener("deviceready", onDeviceReady, false);
+		$.getScript("cordova.js");
+	} else {
+	  //onDeviceReady(); //this is the browser
+	  debug = true;
+	}
+	
+</script>
+
+
+<link rel="stylesheet" type="text/css" href="style.css" media="all">
+</head>
+  <body>
+    <div class="app_wrapper">
+
+    	<div id="actionBar">
+    		<span id="btnActionHome" class="actionbar_back"><img src="images/action_icon.png" width="30" height="30" /></span>
+    		<div id="actionBarButtons">
+	    		<span id="btnSaveGame" >SAVE</span>
+    			<span id="btnEditGame">EDIT GAME</span>
+	    	</div>
+    		<!--<span id="btnActionMenu" class="actionbar_menu"></span>-->
+    	</div>
+
+    	<div id="optionMenu">
+    	</div>
+
+
+    	<!-- HOME VIEW -->
+    	<div class="app_view" id="view_home">
+    		<span class="button block" id="btnContinueGame">CONTINUE GAME</span>
+    		<!--<span class="button block" id="btnSaveGame">SAVE GAME</span>-->
+    		<span class="button block" id="btnNewGame">NEW GAME</span>
+    		<!-- <span class="button block" id="btnPlayers">ADD PLAYER</span> -->
+    		<span class="button block" id="btnLoadGame">LOAD GAME</span>
+    		
+    	</div>
+
+    	<div class="app_view" id="view_loadGame">
+    		<h2>Load a game</h2>
+    		<span id="gameList"></span>
+    	</div>
+
+		
+    	<!-- GAME SETUP VIEW -->
+    	<div class="app_view" id="view_gameSetup">
+    		<h2>Enter names</h2>
+    		<input id="txtPlayer1Name" type="text" Value="" placeholder="Player One" >
+    		<input id="txtPlayer2Name" type="text" Value="" placeholder="Player Two" ><br>
+    		<span class="button" id="btnSetupStartGame">START GAME</span>
+    	</div>
+    	
+
+    	<!-- GAME VIEW -->
+    	<div class="app_view" id="view_game">
+
+			<div class="section_players">
+				<h2><label id="lblP1Name" class="player_name"></label>
+					<span class="player_score">
+						<label id="lblP1Score">0</label>
+						<label id="lblP1FrameScore" class="player_frameScore">(0)</label>
+					</span>
+				</h2>
+				<h2><label id="lblP2Name" class="player_name"></label>
+					<span class="player_score">
+						<label id="lblP2Score">0</label>
+						<label id="lblP2FrameScore" class="player_frameScore">(0)</label>
+					</span>
+				</h2>
+			</div>
+
+			<div class="section_player_actions">
+				<span id="btn_switch" class="button">Switch Player &uarr;&darr;</span>
+				<span id="btn_forfeit" class="button">Forfeit</span>
+				
+			</div>
+
+			<div class="section_table">
+				<div class="section_table_info">
+					<h3><label id="lblScoreDifference"></label> <em><label id="lblScoreRemaining"></label></em> remaining</h3>
+					<h3 class="current_break">Break <em><label id="lblCurrentBreak"></em></label></h3>
+				</div>
+
+				<!-- <h4><label id="lblTargetBall">ON RED</label></h4> -->
+
+				<div id="sectionBalls">
+					<span id="btn_reds"></span>
+					<div id="colourButtons">
+						<span id="btn_colour_7" data-value="7" disabled></span><br>
+						<span id="btn_colour_6" data-value="6" disabled></span>
+						<span id="btn_colour_5" data-value="5" disabled></span><br>
+						<span id="btn_colour_4" data-value="4" disabled></span>
+						<span id="btn_colour_3" data-value="3" disabled></span>
+						<span id="btn_colour_2" data-value="2" disabled></span>
+					</div>
+				</div>
+
+			</div>
+
+			<div class="section_break_actions">
+				<span id="btn_foul" class="button">Foul</span>
+				<span id="btn_undo" class="button">UNDO</span>
+			</div>
+
+			<div id="sectionDialogs">
+				
+				<div id="forfeitOptions" class="dialog" style="display:none;">
+					<span id="btn_forfeit_yes" class="button">FORFEIT FRAME</span>
+					<span id="btn_forfeit_no" class="button">CANCEL</span>
+				</div>
+
+				<div id="foulOptions" class="dialog" style="display:none;">
+					<span id="btn_foul_4" class="button" data-value="4">4</span>
+					<span id="btn_foul_5" class="button" data-value="5">5</span>
+					<span id="btn_foul_6" class="button" data-value="6">6</span>
+					<span id="btn_foul_7" class="button" data-value="7">7</span>
+					<br>
+					<span id="btn_foul_cancel" class="button" data-value="0">CANCEL</span>
+				</div>
+
+				<div id="gameEdit" class="dialog" style="display:none;">
+					<h2><label id="editP1Name"></label></h2>
+					Frames: <input id="editP1FrameScore" type="text" /> Score: <input id="editP1Score" type="text" />
+
+					<h2><label id="editP2Name"></label></h2>
+					Frames: <input id="editP2FrameScore" type="text" /> Score: <input id="editP2Score" type="text" />
+					<br />
+					<h2>Reds</h2>
+					<span class="button" id="editRedsMinus">-</span>
+					<label id="editRedsTotal"></label>
+					<span class="button" id="editRedsPlus">+</span>
+					<br /><br />
+					<span id="editApply" class="button">APPLY</span>
+					<span id="editCancel" class="button">CANCEL</span>
+
+				</div>
+
+			</div>
+
+			<div id="gameAlert" style="display:none;">
+				<span id="gameAlertMessage">
+			</div>
+
+		</div>
+		
+	</div>
+
+
+	<script>
+
+		document.addEventListener("deviceready", initApp, false);
+		window.addEventListener("load", initApp, false);
+
+		var deviceWidth = 0;
+		var deviceHeight = 0;
+		
+		var gameInPlay = false;
+
+		var btnNewGame = $('#btnNewGame');
+		var btnSaveGame = $('#btnSaveGame');
+		var btnEditGame = $('#btnEditGame');
+
+		var btnActionHome = $('#btnActionHome');
+		var btnContinueGame = $('#btnContinueGame');
+		var btnLoadGame = $('#btnLoadGame');
+
+		var btnSetupStartGame = $('#btnSetupStartGame');
+
+		var lblP1Score = $('#lblP1Score');
+		var lblP2Score = $('#lblP2Score');
+		var lblP1FrameScore = $('#lblP1FrameScore');
+		var lblP2FrameScore = $('#lblP2FrameScore');
+
+		var lblP1Name = $('#lblP1Name');
+		var lblP2Name = $('#lblP2Name');
+		var lblRedCount = $('#lblRedCount');
+		var lblScoreRemaining = $('#lblScoreRemaining');
+		var lblTargetBall = $('#lblTargetBall');
+		var lblCurrentBreak = $('#lblCurrentBreak');		
+		var lblScoreDifference = $('#lblScoreDifference');
+		var btn_yellow = $('#btn_yellow');
+		var btn_reds = $('#btn_reds');
+		var btn_colours= $('#colourButtons span');
+		var btn_switch = $('#btn_switch');
+		var btn_undo = $('#btn_undo');
+
+		var gameEdit = $('#gameEdit');
+		var editP1Score = $('#editP1Score');
+		var editP1FrameScore = $('#editP1FrameScore');
+		var editP1Name = $('#editP1Name');
+		
+		var editP2Score = $('#editP2Score');
+		var editP2FrameScore = $('#editP2FrameScore');
+		var editP2Name = $('#editP2Name');
+
+		var editRedsMinus = $('#editRedsMinus');
+		var editRedsPlus = $('#editRedsPlus');
+		var editRedsTotal = $('#editRedsTotal');
+		var editCancel = $('#editCancel');
+		var editApply = $('#editApply');
+
+		var btn_foul = $('#btn_foul');
+		var foulOptions = $('#foulOptions');
+		var btn_forfeit = $('#btn_forfeit');
+		var forfeitOptions = $('#forfeitOptions');		
+		var btn_forfeit_yes = $('#btn_forfeit_yes');
+		var btn_forfeit_no = $('#btn_forfeit_no');
+
+		var gameAlert = $('#gameAlert');
+		var gameAlertMessage = $('#gameAlertMessage');
+		
+		var boolEndFrame = false;
+
+		var playingGame = false;
+		
+		var baizeHeight = 0;
+
+		//var appViews['view_home','view_gameSetup','view_playerList','view_editPlayer','view_loadGame','view_game'];
+		//var currentAppView = 0;
+
+		function AppData(){
+			this.savedGames = [];	
+			this.currentGameId = -1;		
+		}
+
+		function Player(playerName, score, frameScore){
+			this.playerName = playerName;
+			this.score = score || 0;
+			this.frameScore = frameScore || 0;
+			this.maxBreak = 0;
+		}
+
+		function GameVars(){
+			this.redCount = 15;
+			this.colours = [2,3,4,5,6,7];
+			this.scoreRemaining = 147;
+			this.players = [
+								new Player("Player One", 0, 0), 
+								new Player("Player Two", 0, 0)
+							],
+			this.onColour = false;
+			this.breakPlayerId = 0;
+			this.currentPlayerId = 0;
+			this.waitingPlayerId = 1;
+			this.gameStage = 1;
+			this.currentBreak = 0;
+			this.forfeitState = false;
+		}
+
+		var gameVars = new GameVars();		
+		
+		var gameVarHistory = [];
+
+
+		var appData = new AppData();
+
+		if(localStorage.savedGames){
+			appData.savedGames = JSON.parse(localStorage.savedGames);
+		}
+
+
+
+		function onBackKeyDown() {
+			if(currentViewId === 'view_home'){
+				navigator.app.exitApp();
+			}else{
+				vm.changeView('view_home');
+			}		    
+		}
+
+		//APP INIT - run on deviceready
+		function initApp(){
+			//TODO - show splash screen
+				
+			deviceWidth = window.innerWidth;
+			deviceHeight = window.innerHeight - 50;
+			$('.app_wrapper').height(deviceHeight);
+			$('.app_wrapper').width(deviceWidth); 
+			baizeHeight = $('#sectionBalls').innerHeight;
+
+			if(deviceHeight < 450){
+				$('.app_wrapper').addClass('tiny_screen');
+			}
+
+			if((deviceHeight < 400)||(deviceWidth < 350)){
+				$('.app_wrapper').addClass('small_screen');
+			}
+
+			if((deviceHeight > 700)&&(deviceWidth > 500)){
+				$('.app_wrapper').addClass('large_screen');
+			}
+
+			document.addEventListener("backbutton", onBackKeyDown, false);
+
+			vm.changeView('view_home');
+		}
+		
+		var currentViewId = "";
+
+		function ViewManager(){};
+		ViewManager.prototype.changeView = function(viewId){
+				//hide all views
+				$('.app_view').hide();
+				currentViewId = viewId;
+				bindStaticButtons();
+				//show appropriate view
+				switch(viewId){
+					case 'view_home':
+						btnActionHome.hide();
+						$('#view_home').show();
+						break;
+					case 'view_loadGame':
+						//load saved game list
+						btnActionHome.show();
+						$('#gameList').hide().empty();
+						if(appData.savedGames.length < 1){
+							$('#gameList').html('<h2 style="padding-left:16px;">NO SAVED GAMES</h2>');
+						}else{
+							for(var s = 0; s<appData.savedGames.length; s++){
+								//TODO - load this somewhere else?
+								var sgId = appData.savedGames[s].gameId;
+								var sgData = JSON.parse(appData.savedGames[s].gameVarsData);
+								var sgP1Name = sgData.players[0].playerName;
+								var sgP2Name = sgData.players[1].playerName;
+								var ts = new Date(appData.savedGames[s].timestamp);
+								var tsFormat = ts.toDateString() + " " + ts.getHours() + ":" + ts.getMinutes();
+								//TODO - check date exists
+								
+								var lgText = '<span class="list_item_score">(' + sgData.players[0].score + ') ' + sgData.players[0].frameScore + ' - <strong>' + sgP1Name + '</strong>';
+								lgText += '<br/>(' + sgData.players[1].score + ') ' + sgData.players[1].frameScore + ' - <strong>' + sgP2Name + '</strong>';
+								lgText += '</span>' + tsFormat;
+
+								var loadGameListItem = $('<span class="game_list_item"></span>');
+								var loadGameButton = $('<span class="load_game_button" data-gameId="' + sgId + '" />');
+								var deleteGameButton = $('<span class="delete_game_button" data-gameId="' + sgId + '" ></span>');
+								//$('<span class="button" />');
+								
+								loadGameButton.html(lgText);
+								loadGameListItem.append(loadGameButton).append(deleteGameButton);
+								$('#gameList').append(loadGameListItem);
+							}
+						}
+						
+						$('#gameList').show();
+
+						//bind load game buttons outside loop
+						$('.load_game_button').each(function(){
+							var thislgBtn = $(this);
+
+							//bind to click to allow scrolling
+							thislgBtn.show();
+							thislgBtn.off('click');
+							thislgBtn.on('click', function(e){
+								e.stopPropagation();
+								e.preventDefault();
+								loadSavedGame(thislgBtn.attr('data-gameId'));
+							});	
+
+						});
+
+
+						$('.delete_game_button').each(function(){
+							var thislgBtn = $(this);
+
+							//bind to touch to allow scrolling
+							thislgBtn.show();
+							thislgBtn.off('click');
+							thislgBtn.on('click', function(e){
+								e.stopPropagation();
+								e.preventDefault();
+								deleteSavedGame(thislgBtn.attr('data-gameId'));
+								vm.changeView('view_loadGame');
+							});	
+
+						});
+
+						$('#view_loadGame').show();
+						break;
+					case 'view_game':
+						btnActionHome.show();
+						$('#view_game').show();
+						break;
+					case 'view_gameSetup':
+						btnActionHome.show();
+						$('#view_gameSetup').show();
+						break;
+					default:
+						break;
+				}
+	
+		};
+
+		var vm = new ViewManager();
+
+
+		function GameSave(){
+			this.gameId;
+			this.timestamp;
+			this.gameVarsData;
+		}	
+
+		function GetGameSaves(){
+			return appData.savedGames;
+		}
+
+		function getIncrementedGameSaveId(){
+			var sg = GetGameSaves();
+			var newId = 0;
+			if(sg.length>0){
+				newId = sg[sg.length-1].gameId + 1;
+			}
+			return newId;
+		}
+
+
+		function saveCurrentGame(){
+			logMsg("save game");
+			var serialisedState = JSON.stringify(gameVars);
+			var gameSave = new GameSave();
+			logMsg("current game id = " + appData.currentGameId);
+			if(appData.currentGameId == -1){
+				//new game, first save
+				gameSave.gameId = getIncrementedGameSaveId();
+				logVal("#### NEW GAME ID",gameSave.gameId);
+				appData.currentGameId = gameSave.gameId;
+			}else{
+				gameSave.gameId = appData.currentGameId;
+				logVal("#### EXISTING GAME ID",gameSave.gameId);
+				//delete existing game
+				deleteSavedGame(gameSave.gameId);
+			}
+			toast("SAVED");
+
+			logVal("#### SAVED GAME ID",gameSave.gameId);
+			gameSave.gameVarsData = serialisedState;
+			gameSave.timestamp = Date.now();
+			appData.savedGames.push(gameSave);
+			localStorage.savedGames = JSON.stringify(appData.savedGames);
+		}
+
+		function deleteSavedGame(sgGameId){
+			var sg = GetGameSaves();
+			for(var sgi =0; sgi<sg.length; sgi++){
+				if(sg[sgi].gameId == sgGameId){
+					sg.splice(sgi,1);
+				}
+			}
+			localStorage.savedGames = JSON.stringify(appData.savedGames);
+		}
+
+		function loadSavedGame(sgGameId){
+			ResetCurrentGame();
+
+			var sg = GetGameSaves();
+			var loadGameId = -1;
+			var sgLoc = 0;
+
+			for(var sgi =0; sgi<sg.length; sgi++){
+				if(sg[sgi].gameId == sgGameId){
+					loadGameId = sg[sgi].gameId;
+					sgLoc = sgi;
+				}
+			}
+
+			if(loadGameId != -1){
+
+				appData.currentGameId = loadGameId;
+			
+				var gameVarsTemp = new GameVars();
+				gameVarsTemp = JSON.parse(sg[sgLoc].gameVarsData);
+
+				for(var gv in gameVarsTemp){
+					if(typeof gameVarsTemp[gv] != 'undefined'){
+						gameVars[gv] = gameVarsTemp[gv];
+					}
+				}
+
+				gameInPlay = true;
+				loadGame();
+			}
+			else{
+				logMsg('ERROR - NO GAME WITH THAT ID');
+			}
+		}
+
+		function ResetCurrentGame(){
+			gameVars = new GameVars();
+			gameVarHistory = [];			
+			appData.currentGameId = -1;
+		}
+
+		function startNewFrame(){
+			logMsg("reset frame");
+			gameVarHistory = [];
+			
+			gameVars.redCount = 15;
+			gameVars.colours = [2,3,4,5,6,7];
+			gameVars.scoreRemaining = 147;
+			gameVars.onColour = false;
+			gameVars.waitingPlayerId = gameVars.breakPlayerId;
+			gameVars.breakPlayerId = otherPlayer(gameVars.breakPlayerId);
+			gameVars.currentPlayerId = gameVars.breakPlayerId;
+			gameVars.gameStage = 1;
+			gameVars.currentBreak = 0;
+			gameVars.forfeitState = false;
+			gameVars.players[0].score = 0;
+			gameVars.players[1].score = 0;
+			refreshGame();
+		}
+
+
+		function loadGame(){
+
+			vm.changeView('view_game');			
+
+			lblP1Name.text(gameVars.players[0].playerName);
+			lblP2Name.text(gameVars.players[1].playerName);
+
+
+			refreshGame();
+
+			saveState();
+
+			bindStaticGameButtons();
+
+			gameInPlay = true;
+			
+		}
+
+		function loadNewGame(){
+			ResetCurrentGame();
+			
+			if(txtPlayer1Name.value != ""){ gameVars.players[0].playerName = txtPlayer1Name.value; }
+			if(txtPlayer2Name.value != ""){ gameVars.players[1].playerName = txtPlayer2Name.value; }
+
+			//choose random player to break
+			gameVars.breakPlayerId = Math.round(Math.random());
+			gameVars.currentPlayerId = gameVars.breakPlayerId;
+
+			pgAlert(gameVars.players[gameVars.breakPlayerId].playerName + " to break", null, "Break", "OK")
+
+			loadGame();
+		}
+
+		function newGame(){
+			vm.changeView('view_gameSetup');
+		}
+		
+		function saveState(){
+			var serialisedState = JSON.stringify(gameVars);
+			gameVarHistory.push(serialisedState);
+		}
+
+		function undo(){
+			if(gameVarHistory.length>0){
+				var gameVarsTemp = new GameVars();
+				gameVarsTemp = JSON.parse(gameVarHistory.pop());
+
+				for(var gv in gameVarsTemp){
+					gameVars[gv] = gameVarsTemp[gv];
+				} 
+			}	
+		}
+
+
+		function calcRemaining(){
+			var sumColours = 0;
+			for(i=0; i < gameVars.colours.length;i+=1){
+				sumColours += gameVars.colours[i];
+			}
+						
+			if(gameVars.onColour){
+				gameVars.scoreRemaining = (gameVars.redCount * 7) + gameVars.redCount + sumColours;
+			}else{
+				gameVars.scoreRemaining = (gameVars.redCount * 7) + gameVars.redCount + sumColours;
+			}
+
+			if(gameVars.scoreRemaining <= 0){
+				endFrame();
+			}
+			
+		}
+		
+		function potRed(){
+			if(gameVars.redCount > 0){
+				gameVars.redCount -= 1;
+				givePoints(1);
+				gameVars.currentBreak += 1;
+				gameVars.onColour = true;
+
+				calcRemaining();
+			}
+		};
+				
+		function potColour(colourIndex){
+			if(gameVars.gameStage === 1){
+				if(gameVars.onColour){
+						givePoints(colourIndex);
+						gameVars.currentBreak += colourIndex;
+
+						if(gameVars.redCount > 0){
+							gameVars.onColour = false;
+						}else{
+							//player pots colour after final red
+							gameVars.gameStage = 2;
+						}
+
+						calcRemaining();
+				}else{
+					foul(colourIndex);
+				}
+			}else{
+				//Game stage 2
+				givePoints(colourIndex);
+				gameVars.currentBreak += colourIndex;
+				if(colourIndex === 7){
+				
+					boolEndFrame = true;
+				}
+					//check it's not the black ball with scores level
+					if(boolEndFrame){
+						//respot black
+						if(gameVars.players[0].score == gameVars.players[1].score){
+							logMsg("respot black");
+							boolEndFrame = false;
+						}else{
+							gameVars.colours.splice(0,1);
+						}
+					}else{
+						gameVars.colours.splice(0,1);
+						logMsg("pot colour");
+					}
+					//This should always be the ball pocketed (lowest colour)
+				
+			}
+			
+		};
+
+		function switchPlayer(){
+			gameVars.waitingPlayerId = gameVars.currentPlayerId;
+
+			gameVars.currentPlayerId = otherPlayer(gameVars.currentPlayerId);
+
+			//if all reds are down, go to colours stage (2)
+			if(gameVars.redCount == 0){
+				gameVars.gameStage = 2;
+			}
+
+			//start of a turn is otherwise a red
+			if(gameVars.gameStage === 1){
+				gameVars.onColour = false;
+			}else{
+				gameVars.onColour = true;
+			}
+
+			gameVars.currentBreak = 0;
+			forfeitState = false;
+		}
+
+		//Give points to current player
+		function givePoints(pointsValue){
+			gameVars.players[gameVars.currentPlayerId].score += pointsValue;
+		}
+		
+		function foul(pointsValue){
+			//give player foul value
+			switchPlayer();
+			givePoints(pointsValue);
+			calcRemaining();
+		}
+		
+		function removeRed(){
+			redCount -= 1;
+			calcRemaining();
+		}
+
+		function endFrame(){
+			updateLabels();
+			var winnerId = 0;
+			if(gameVars.players[0].score < gameVars.players[1].score){
+				winnerId = 1;
+			}
+
+			gameVars.players[winnerId].frameScore += 1;
+			pgAlert(gameVars.players[winnerId].playerName + " wins the frame", startNewFrame, "End of frame", "Start new frame");
+		}
+
+
+		function forfeitFrame(){
+			//TODO - need to account for leading player forfeiting?
+			endFrame();
+		}
+		
+		function showEditGame(){
+			gameEdit.show();
+
+			bindButton(editCancel, function(){
+				gameEdit.hide();
+			});
+
+			bindButton(editApply, function(){
+				var intP1Score = parseInt(editP1Score.val());
+				var intP1FrameScore = parseInt(editP1FrameScore.val());
+				var intP2Score = parseInt(editP2Score.val());
+				var intP2FrameScore = parseInt(editP2FrameScore.val());
+				var intRedCount = parseInt(editRedsTotal.text());
+
+				if(intP1Score >= 0 && intP1Score < 162){ gameVars.players[0].score = intP1Score }
+				if(intP1FrameScore >= 0){ gameVars.players[0].frameScore = intP1FrameScore }
+
+				if(intP2Score >= 0 && intP2Score < 162){ gameVars.players[1].score = intP2Score }
+				if(intP2FrameScore >= 0){ gameVars.players[1].frameScore = intP2FrameScore }
+
+				gameVars.redCount = intRedCount;
+
+				refreshGame();
+				gameEdit.hide();
+			});
+
+			var edit_reds_count = gameVars.redCount;
+			editRedsTotal.text(edit_reds_count);
+
+			editP1Name.text(gameVars.players[0].playerName);
+			editP1FrameScore.val(gameVars.players[0].frameScore);
+			editP1Score.val(gameVars.players[0].score);
+
+			editP2Name.text(gameVars.players[1].playerName);
+			editP2FrameScore.val(gameVars.players[1].frameScore);
+			editP2Score.val(gameVars.players[1].score);
+			bindButton(editRedsMinus, function(){
+				var edit_rc = parseInt(editRedsTotal.text());
+				if(edit_rc > 0){
+					editRedsTotal.text(edit_rc - 1);
+				}
+			});
+			bindButton(editRedsPlus, function(){
+				var edit_rc = parseInt(editRedsTotal.text());
+				if(edit_rc < 15){
+					editRedsTotal.text(edit_rc + 1);
+				}
+			});
+		}
+
+		function updateLabels(){
+			btn_reds.text(gameVars.redCount);
+
+			if(typeof gameVars.players[0].frameScore == 'undefined'){
+				gameVars.players[0].frameScore = 0;
+			}
+			if(typeof gameVars.players[1].frameScore == 'undefined'){
+				gameVars.players[1].frameScore = 0;
+			}
+			lblP1FrameScore.text("(" + gameVars.players[0].frameScore + ")");
+			lblP2FrameScore.text("(" + gameVars.players[1].frameScore + ")");
+
+			lblP1Score.text(gameVars.players[0].score);
+			lblP2Score.text(gameVars.players[1].score);
+
+			lblCurrentBreak.text(gameVars.currentBreak);
+
+			if(gameVars.gameStage === 1){
+				if(gameVars.onColour){
+					lblTargetBall.text("ON COLOUR");
+				}else{
+					lblTargetBall.text("ON RED");
+				}
+			}else{
+				switch(gameVars.colours[0]){
+					case 2 : 
+						lblTargetBall.text("ON YELLOW");
+						break;
+					case 3 : 
+						lblTargetBall.text("ON GREEN");
+						break;
+					case 4 : 
+						lblTargetBall.text("ON BROWN");
+						break;
+					case 5 : 
+						lblTargetBall.text("ON BLUE");
+						break;
+					case 6 : 
+						lblTargetBall.text("ON PINK");
+						break;
+					case 7 : 
+						lblTargetBall.text("ON PINK");
+						break;					
+				}				
+			}
+
+			var currentPlayer = gameVars.players[gameVars.currentPlayerId];
+			var waitingPlayer = gameVars.players[gameVars.waitingPlayerId];
+			var scoreDifference = currentPlayer.score - waitingPlayer.score;
+			if(scoreDifference > 0){
+				//winning
+				lblScoreDifference.html('<em>' + scoreDifference + '</em> ahead');
+			}else 
+			if(scoreDifference < 0){
+				//losing
+				lblScoreDifference.html('<em>' + Math.abs(scoreDifference) + '</em> behind');
+				if(Math.abs(scoreDifference) > gameVars.scoreRemaining){
+					gameVars.forfeitState = true;
+				}
+			}else{
+				//drawing
+				lblScoreDifference.html('');
+			}
+
+
+			lblScoreRemaining.text(gameVars.scoreRemaining);
+
+			if(gameVars.currentPlayerId === 0){
+				//PLAYER 1
+				lblP1Score.closest('h2').addClass('active');
+				lblP2Score.closest('h2').removeClass('active');
+
+			}else{
+				//PLAYER 2
+				lblP2Score.closest('h2').addClass('active');
+				lblP1Score.closest('h2').removeClass('active');
+			}
+		}
+
+		function activeButtons(){
+			
+			logMsg("activeButtons");
+
+
+			if(gameVars.onColour){
+				btn_reds.addClass('disabled');
+				btn_colours.removeClass('disabled');
+
+			}else{
+				btn_reds.removeClass('disabled');
+				btn_colours.addClass('disabled');
+			}
+
+			if(gameVarHistory.length>0){
+				btn_undo.removeClass('disabled');
+			}else{
+				btn_undo.addClass('disabled');
+			}
+			
+			//logVal('on colour',gameVars.onColour);
+			//logVal("game stage", gameVars.gameStage);
+			//logVal("colours", gameVars.colours);
+
+
+			if(gameVars.gameStage === 2){
+				$('#colourButtons span').addClass('disabled');	
+				if(gameVars.colours.length>0){
+					$('#btn_colour_' + gameVars.colours[0].toString()).removeClass('disabled');
+				}
+			}
+
+			if(gameVars.forfeitState === true){
+				btn_forfeit.removeClass('disabled');
+			}else{
+				btn_forfeit.addClass('disabled');
+			}
+
+			bindRedTouch();
+			bindColourTouch();
+
+			if(btn_reds.hasClass('disabled')){
+				btn_reds.unbind('touchstart');
+			}
+
+			btn_colours.each(function(){
+				if($(this).hasClass('disabled')){
+					$(this).unbind('touchstart');
+				}
+			});
+			
+		}
+		
+
+		function refreshGame(){
+			calcRemaining();
+			updateLabels();
+			activeButtons();
+		}
+
+		function bindRedTouch(){
+			bindButtonVibrate(btn_reds, function(e){
+				logMsg('red touched');
+				saveState();
+				potRed();
+				refreshGame();
+			});
+		}
+
+		function bindColourTouch(){
+			btn_colours.each(function(){
+				var thisColour = $(this);
+				bindButtonVibrate(thisColour, function(){
+					logMsg('colour touched');
+					var colourValue = parseInt(thisColour.attr('data-value'));
+					saveState();
+					potColour(colourValue);
+					refreshGame();
+
+				});
+			});
+		}
+
+		function bindStaticGameButtons(){
+
+			bindButton(btn_undo, function(){
+				undo();
+				refreshGame();
+			});
+
+			bindButton(btn_foul, function(){
+				foulOptions.toggle();
+			});
+
+			bindButton(btnEditGame, function(){
+				showEditGame();
+			});
+
+			foulOptions.find('span').not('#btn_foul_cancel').each(function(){
+				var thisSpan = $(this);
+				bindButton(thisSpan, function(){
+					saveState();
+					foul(parseInt(thisSpan.attr('data-value')));
+					foulOptions.hide();
+					refreshGame();
+				});
+			});			
+
+			bindButton(foulOptions.find('#btn_foul_cancel'), function(){
+				foulOptions.hide();
+			});
+
+			bindButton(btn_switch, function(){
+				saveState();
+				switchPlayer();
+				refreshGame();
+			});
+
+			bindButton(btn_forfeit, function(){
+				forfeitOptions.toggle();
+			});	
+
+			bindButton(btn_forfeit_no, function(){
+				forfeitOptions.hide();
+			});
+
+			bindButton(btn_forfeit_yes, function(){
+				forfeitFrame();
+				forfeitOptions.hide();
+			});
+		}
+
+		
+
+		function bindStaticButtons(){
+
+			bindButton(btnNewGame, newGame);
+			
+			bindButton(btnSaveGame, function(){
+				saveCurrentGame();
+			});
+
+			if(gameInPlay){
+				bindButton(btnContinueGame, function(){
+					vm.changeView('view_game');
+				});
+				btnContinueGame.removeClass('disabled');
+			}else{
+				disableButton(btnContinueGame);
+			}
+
+			bindButton(btnActionHome, function(){
+				vm.changeView('view_home');
+			});
+
+
+			btnLoadGame.show();
+			btnLoadGame.off('click');
+			btnLoadGame.on('click', function(e){
+				e.stopPropagation();
+				e.preventDefault();
+				vm.changeView('view_loadGame');
+			});		
+
+
+			bindButton(btnSetupStartGame, function(){
+				loadNewGame();
+			});
+
+			switch(currentViewId){
+				case "view_game":
+					showButton(btnSaveGame);
+					showButton(btnEditGame);
+					break
+				default:
+					hideButton(btnSaveGame);
+					hideButton(btnEditGame);
+					break;
+			}
+		}
+
+
+		function otherPlayer(playerId){
+			var otherPlayerId = 0;
+			if(playerId === 0){
+				otherPlayerId = 1;
+			}
+			return otherPlayerId;
+		}
+
+		function bindButton(targetButton,boundFunction){
+			targetButton.show();
+			targetButton.off('touchstart');
+			targetButton.on('touchstart', function(e){
+				e.stopPropagation();
+				e.preventDefault();
+				boundFunction();
+			});		
+		}
+		function disableButton(targetButton){
+			targetButton.off('touchstart');
+			targetButton.addClass('disabled');
+		}
+		function hideButton(targetButton){
+			targetButton.hide();
+		}
+		function showButton(targetButton){
+			targetButton.show();
+		}
+
+		function bindButtonVibrate(targetButton,boundFunction){
+			bindButton(targetButton,function(){
+				vibrate(30);
+				boundFunction();
+			});
+		}
+
+		function logVal(label,value){
+			console.log(label + " = " + value);
+		}
+		function logMsg(message){
+			console.log(message);
+		}
+		function vibrate(length){
+			if(debug){
+				logMsg("buzzzz");
+			}else{
+				navigator.notification.vibrate(length);
+			}
+		}
+
+		function toast(message){
+			gameAlert.text(message);
+			gameAlert.fadeIn(300,function(){
+				gameAlert.delay(300).fadeOut(400);
+			});
+		}
+
+		function debugAlert(message){
+			pgAlert(message, null, "Debug","OK");
+		}
+
+		function pgAlert(message, callback, title, buttonName){
+
+			if(debug){
+				var pga = confirm(message);
+				if(pga == true){
+					if((typeof callback != undefined)&&(callback != null)){
+						callback.call();
+					}
+				}
+			}else{
+				navigator.notification.alert(
+				    message,  // message
+				    callback,         // callback
+				    title,            // title
+				    buttonName                  // buttonName
+				);
+			}
+		}
+
+	</script>
+
+
+  </body>
+</html>

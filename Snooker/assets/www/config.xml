@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<widget xmlns = "http://www.w3.org/ns/widgets"
+        xmlns:gap = "http://phonegap.com/ns/1.0"
+        id        = "com.rickels.snookerscoreboard"
+        version   = "1.0.0">
+    <name>Snooker Scoreboard</name>
+
+    <description>
+        Keep score while playing snooker by pressing the ball that was potted.
+    </description>
+
+    <author href="http://rickels.co.uk" email="chris@rickels.co.uk">
+        Chris Rickels
+    </author>
+
+    <access origin="*"/>
+
+    <content src="index.html" />
+	
+	 <preference name="orientation" value="portrait" />
+	
+    <preference name="InAppBrowserStorageEnabled" value="true" />
+      
+
+    <feature name="http://api.phonegap.com/1.0/device" />
+    <feature name="http://api.phonegap.com/1.0/notification"/>
+    
+</widget>

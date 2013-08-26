@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.
+-->
+<widget xmlns     = "http://www.rickels.co.uk"
+        id        = "com.snookerscoreboard"
+        version   = "0.0.9">
+    <name>Snooker Scoreboard</name>
+
+    <description>
+        Keep score while playing snooker by pressing the ball that was potted.
+    </description>
+
+    <author href="http://rickels.co.uk" email="chris@rickels.co.uk">
+        Chris Rickels
+    </author>
+
+    <access origin="*"/>
+
+    <!-- <content src="http://mysite.com/myapp.html" /> for external pages -->
+    <content src="index.html" />
+
+    <preference name="loglevel" value="DEBUG" />
+    <!--
+      <preference name="splashscreen" value="resourceName" />
+      <preference name="backgroundColor" value="0xFFF" />
+      <preference name="loadUrlTimeoutValue" value="20000" />
+      <preference name="InAppBrowserStorageEnabled" value="true" />
+      <preference name="disallowOverscroll" value="true" />
+    -->
+
+    <feature name="App">
+      <param name="android-package" value="org.apache.cordova.App"/>
+    </feature>
+    <feature name="Device">
+      <param name="android-package" value="org.apache.cordova.Device"/>
+    </feature>
+    <feature name="File">
+      <param name="android-package" value="org.apache.cordova.FileUtils"/>
+    </feature>
+    <feature name="Notification">
+      <param name="android-package" value="org.apache.cordova.Notification"/>
+    </feature>
+    <feature name="Storage">
+      <param name="android-package" value="org.apache.cordova.Storage"/>
+    </feature>
+    <feature name="FileTransfer">
+      <param name="android-package" value="org.apache.cordova.FileTransfer"/>
+    </feature>
+    <feature name="SplashScreen">
+      <param name="android-package" value="org.apache.cordova.SplashScreen"/>
+    </feature>
+    <feature name="Echo">
+      <param name="android-package" value="org.apache.cordova.Echo"/>
+    </feature>
+    <feature name="InAppBrowser">
+      <param name="android-package" value="org.apache.cordova.InAppBrowser"/>
+    </feature>
+    <!-- Deprecated plugins element. Remove in 3.0 -->
+    <plugins>
+    </plugins>
+</widget>
