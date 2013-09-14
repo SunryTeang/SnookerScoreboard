@@ -1,7 +1,7 @@
 SnookerScoreboard
 =================
 
-Android Snooker Scoreboard app
+**Android Snooker Scoreboard app**
 
 Easy to use score keeping app for playing snooker.
 
