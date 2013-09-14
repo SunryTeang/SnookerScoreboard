@@ -15,6 +15,6 @@ Undo function - With history for whole frame.
 Try out a demo version at http://snooker.rickels.co.uk/
 
 ************
-I've put this up as a personal backup, and for anyone who is interested in how it works. 
+I've put this up as a personal backup, and for anyone who is interested in how it works.
 Please don't copy it and claim it as your own, thanks a bunch.
 ************
